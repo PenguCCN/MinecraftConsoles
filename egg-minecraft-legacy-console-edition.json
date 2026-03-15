@@ -1,0 +1,54 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2026-03-15T18:43:41-05:00",
+    "name": "Minecraft Legacy Console Edition",
+    "author": "pengu@pengucc.com",
+    "description": "Minecraft Legacy Console Edition server using smartcmd nightly builds.",
+    "features": [
+        "pid_limit"
+    ],
+    "docker_images": {
+        "Wine": "ghcr.io\/ptero-eggs\/yolks:wine_latest"
+    },
+    "file_denylist": [],
+    "startup": "wine Minecraft.Server.exe",
+    "config": {
+        "files": "{\r\n    \"server.properties\": {\r\n        \"parser\": \"properties\",\r\n        \"find\": {\r\n            \"server-ip\": \"0.0.0.0\",\r\n            \"server-port\": \"{{server.build.default.port}}\",\r\n            \"query.port\": \"{{server.build.default.port}}\",\r\n            \"autosave-interval\": \"{{env.AUTOSAVE}}\",\r\n            \"max-players\": \"{{env.MAXPLAYERS}}\"\r\n        }\r\n    }\r\n}",
+        "startup": "{\r\n    \"done\": \"Server\"\r\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/bash\r\n# Minecraft Legacy Console Edition (Nightly)\r\n# Server Files: \/mnt\/server\r\n\r\ncd \/mnt\/server\r\n\r\napt update\r\napt install -y curl unzip\r\n\r\nDOWNLOAD_URL=\"https:\/\/github.com\/smartcmd\/MinecraftConsoles\/releases\/download\/nightly-dedicated-server\/LCEServerWindows64.zip\"\r\n\r\necho \"Downloading nightly build\"\r\ncurl -L $DOWNLOAD_URL -o lce.zip\r\n\r\necho \"Extracting files\"\r\nunzip lce.zip\r\n\r\nrm lce.zip\r\n\r\n# create default username\r\nif [ ! -f username.txt ]; then\r\n  echo \"Pterodactyl\" > username.txt\r\nfi",
+            "container": "ghcr.io\/pterodactyl\/installers:debian",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Autosave",
+            "description": "Autosave (In Seconds)",
+            "env_variable": "AUTOSAVE",
+            "default_value": "60",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:4",
+            "field_type": "text"
+        },
+        {
+            "name": "Max Players",
+            "description": "Maximum amount of players",
+            "env_variable": "MAX_PLAYERS",
+            "default_value": "16",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:3",
+            "field_type": "text"
+        }
+    ]
+}
